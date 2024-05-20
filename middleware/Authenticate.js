@@ -20,9 +20,6 @@ const authenticateToken = (req, res, next) => {
       return res.sendStatus(403); // 403 Forbidden
     }
 
-    // Fetch the Users collection from the database
-    // const Users = await db.collection("Users");
-
     // If user does not exist return 404 Not Found
     if (!user) {
       // If no user exists with the given ID return 401 unauthorized

@@ -7,11 +7,13 @@ const getMovies = async (req, res) => {
     // Define offset
     const offset = req.query.page ? (parseInt(req.query.page) - 1) * 20 : 0;
 
-    // Fetch the Movies collection from the database
-    // const Movies = await db.collection("Movies");
-
     // Fetch all movies
-    const movies = await Movies.find({},{ projection: { title: 1, bannerUrl: 1, releaseDate: 1, type: 1 } }).skip(offset).limit(20);
+    const movies = await Movies.find(
+      {},
+      { title: 1, bannerUrl: 1, releaseDate: 1, type: 1 }
+    )
+      .skip(offset)
+      .limit(20);
 
     // If no movies are found return 404 Not Found
     if (movies.length === 0) {
@@ -33,25 +35,33 @@ const searchMovies = async (req, res) => {
     // Fetch the query parameter from the request
     const { query } = req.query;
 
-    // Fetch the Movies collection from the database
-    const Movies = await db.collection("Movies");
+    // Validate the query parameter
+    if (!query || typeof query !== "string" || query.trim().length === 0) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Query parameter is required and should be a non-empty string",
+        });
+    }
+    // Build the search criteria
+    let searchCriteria = {
+      title: { $regex: new RegExp(query, "i") },
+    };
 
     // Search for movies with the given query
-    const movies = await Movies.find(
-      {
-        title: { $regex: new RegExp(query, "i") },
-      },
-      { projection: { title: 1, bannerUrl: 1, releaseDate: 1, type: 1 } }
-    )
-      .limit(20);
+    const moviesCursor = await Movies.find(
+      searchCriteria,
+      { title: 1, bannerUrl: 1, releaseDate: 1, type: 1 }
+    ).limit(20);
 
     // If no movies are found return 404 Not Found
-    if (movies.length === 0) {
+    if (moviesCursor.length === 0) {
       return res.status(404).json({ message: "No movies found" });
     }
 
     // Send the movies back to the client
-    res.json(movies);
+    res.json(moviesCursor);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -61,14 +71,13 @@ const searchMovies = async (req, res) => {
 // Get a movie by its ID
 const getMovie = async (req, res) => {
   try {
-    // Fetch the Movies collection from the database
-    const Movies = await db.collection("Movies");
+   const id = req.params.id
 
     // Fetch the movie with the given ID
     const movie = await Movies.findOne(
-      { _id: new ObjectId(req.params.id) },
+      { _id: new ObjectId(id) },
       {
-        projection: {
+       
           title: 1,
           releaseDate: 1,
           rating: 1,
@@ -78,7 +87,7 @@ const getMovie = async (req, res) => {
           language: 1,
           posterUrl: 1,
           status: 1,
-        },
+        
       }
     );
 
@@ -98,22 +107,19 @@ const getMovie = async (req, res) => {
 // Get URLs for the movie
 const getMovieUrls = async (req, res) => {
   try {
-    // Fetch the Movies collection from the database
-    const Movies = await db.collection("Movies");
+  
 
     // Fetch the movie with the given ID
     const movie = await Movies.findOne(
       { _id: new ObjectId(req.params.id) },
       {
-        projection: {
-          homepage: 1,
-          trailerUrl: 1,
-          imdbUrl: {
-            $cond: {
-              if: { $eq: ["$imdbId", ""] }, // Check if imdbId exists and is not empty
-              then: 0, // If imdbId is empty, return an empty string for imdbUrl
-              else: { $concat: ["https://www.imdb.com/title/", "$imdbId"] }, // If imdbId exists, concatenate the URL
-            },
+        homepage: 1,
+        trailerUrl: 1,
+        imdbUrl: {
+          $cond: {
+            if: { $eq: ["$imdbId", ""] }, // Check if imdbId exists and is not empty
+            then: 0, // If imdbId is empty, return an empty string for imdbUrl
+            else: { $concat: ["https://www.imdb.com/title/", "$imdbId"] }, // If imdbId exists, concatenate the URL
           },
         },
       }

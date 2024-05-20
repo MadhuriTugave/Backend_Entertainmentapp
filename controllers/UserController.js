@@ -1,8 +1,6 @@
 const Users = require("../models/User");
 const bcrypt = require("bcrypt");
-
 const jwt = require("jsonwebtoken");
-const ObjectId = require("mongoose").Types.ObjectId;
 const KEY = process.env.JWT_SECRET_KEY;
 const SignUp = async (req, res) => {
     try {
@@ -28,7 +26,7 @@ const SignUp = async (req, res) => {
         _id: userCreated._id,
         email: email,
       };
-  console.log(responseUser)
+
       // Generate an access token for the newly created user
       const accessToken = jwt.sign(
         { _id: userCreated._id },
@@ -48,7 +46,7 @@ const SignUp = async (req, res) => {
         expiresIn: "3600",
       });
     } catch (err) {
-      console.error(err);
+      
       res.status(500).json({ success: false, message: "Error registering user" });
     }
   };

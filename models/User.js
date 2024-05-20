@@ -13,8 +13,15 @@ const UserSchema = new mongoose.Schema({
   },
   watchlist: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: ["Movie", "TVShow"],
+      _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+      },
+      type: {
+        type: String,
+        required: true,
+        enum: ["Movie", "TVShow"],
+      },
     },
   ],
 });

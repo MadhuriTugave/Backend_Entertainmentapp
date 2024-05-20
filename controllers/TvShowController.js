@@ -1,4 +1,4 @@
-const TvShows = require("../models/Tv_show");
+const TVShows = require("../models/Tv_show");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 // Get all tvShows
@@ -7,20 +7,15 @@ const getTVShows = async (req, res) => {
     // Define offset
     const offset = req.query.page ? (parseInt(req.query.page) - 1) * 20 : 0;
 
-    // Fetch the TvShows collection from the database
-    // const TvShows = await db.collection("Shows");
-
     // Fetch all tvShows
-    const tvShows = await TvShows.find(
+    const tvShows = await TVShows.find(
       {},
       {
-        projection: {
-          title: 1,
-          bannerUrl: 1,
-          firstAirDate: 1,
-          lastAirDate: 1,
-          type: 1,
-        },
+        title: 1,
+        bannerUrl: 1,
+        firstAirDate: 1,
+        lastAirDate: 1,
+        type: 1,
       }
     )
       .skip(offset)
@@ -45,26 +40,26 @@ const searchTVShows = async (req, res) => {
     // Fetch the query parameter from the request
     const { query } = req.query;
 
-    // Fetch the TvShows collection from the database
-    const TvShows = await db.collection("Shows");
+    // Validate the query parameter
+    if (!query || typeof query !== "string" || query.trim().length === 0) {
+      return res.status(400).json({
+        message: "Query parameter is required and should be a non-empty string",
+      });
+    }
 
     // Search for tvShows with the given query
-    const tvShows = await TvShows.find(
+    const tvShows = await TVShows.find(
       {
         title: { $regex: new RegExp(query, "i") },
       },
       {
-        projection: {
-          title: 1,
-          bannerUrl: 1,
-          firstAirDate: 1,
-          lastAirDate: 1,
-          type: 1,
-        },
+        title: 1,
+        bannerUrl: 1,
+        firstAirDate: 1,
+        lastAirDate: 1,
+        type: 1,
       }
-    )
-      .limit(20)
-      .toArray();
+    ).limit(20);
 
     // If no tvShows are found return 404 Not Found
     if (tvShows.length === 0) {
@@ -82,25 +77,21 @@ const searchTVShows = async (req, res) => {
 // Get a tvShow by its ID
 const getTVShow = async (req, res) => {
   try {
-    // Fetch the TvShows collection from the database
-    const TVShows = await db.collection("Shows");
-
+    const id = req.params.id;
     // Fetch the tvShow with the given ID
     const tvShow = await TVShows.findOne(
-      { _id: new ObjectId(req.params.id) },
+      { _id: new ObjectId(id) },
       {
-        projection: {
-          title: 1,
-          firstAirDate: 1,
-          lastAirDate: 1,
-          rating: 1,
-          summary: 1,
-          genres: 1,
-          runtime: 1,
-          language: 1,
-          posterUrl: 1,
-          status: 1,
-        },
+        title: 1,
+        firstAirDate: 1,
+        lastAirDate: 1,
+        rating: 1,
+        summary: 1,
+        genres: 1,
+        runtime: 1,
+        language: 1,
+        posterUrl: 1,
+        status: 1,
       }
     );
 
@@ -120,22 +111,17 @@ const getTVShow = async (req, res) => {
 // Get URLs for the tvShow
 const getTVShowUrls = async (req, res) => {
   try {
-    // Fetch the TVShows collection from the database
-    const TVShows = await db.collection("Shows");
-
     // Fetch the TV Show with the given ID
     const tvShow = await TVShows.findOne(
       { _id: new ObjectId(req.params.id) },
       {
-        projection: {
-          homepage: 1,
-          trailerUrl: 1,
-          imdbUrl: {
-            $cond: {
-              if: { $eq: ["$imdbId", ""] }, // Check if imdbId exists and is not empty
-              then: "", // If imdbId is empty, return an empty string for imdbUrl
-              else: { $concat: ["https://www.imdb.com/title/", "$imdbId"] }, // If imdbId exists, concatenate the URL
-            },
+        homepage: 1,
+        trailerUrl: 1,
+        imdbUrl: {
+          $cond: {
+            if: { $eq: ["$imdbId", ""] }, // Check if imdbId exists and is not empty
+            then: "", // If imdbId is empty, return an empty string for imdbUrl
+            else: { $concat: ["https://www.imdb.com/title/", "$imdbId"] }, // If imdbId exists, concatenate the URL
           },
         },
       }
@@ -157,16 +143,12 @@ const getTVShowUrls = async (req, res) => {
 // Get cast for the tvShow
 const getTVShowCast = async (req, res) => {
   try {
-    // Fetch the TVShows collection from the database
-    const TVShows = await db.collection("Shows");
-
+    const id = req.params.id;
     // Fetch the TV Show with the given ID
     const tvShow = await TVShows.findOne(
-      { _id: new ObjectId(req.params.id) },
+      { _id: new ObjectId(id) },
       {
-        projection: {
-          cast: 1,
-        },
+        cast: 1,
       }
     );
 
@@ -178,7 +160,7 @@ const getTVShowCast = async (req, res) => {
     // Send the TV Show back to the client
     res.json(tvShow);
   } catch (err) {
-    console.error(err);
+   
     res.status(500).json({ message: "Server error" });
   }
 };
