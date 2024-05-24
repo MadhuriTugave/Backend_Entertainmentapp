@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const fetch = require("node-fetch");
 const Movies = require("../models/Movie");
 const TVShow =require("../models/Tv_show");
+const Movie = require("../models/Movie");
 
 // Load environment variables from the .env file
 dotenv.config();
@@ -13,9 +14,10 @@ const client = new MongoClient(uri);
 client.connect();
 
 const DB = client.db('test');
+const trendingCollection = DB.collection("Trending");
 // Helper function to check if the Trending collection needs an update
 const needsUpdate = async () => {
-  const trendingCollection = DB.collection("Trending");
+ 
   const latestEntry = await trendingCollection.findOne(
     {},
     { sort: { _id: -1 } }
@@ -36,29 +38,57 @@ const updateTrendingCollection = async () => {
   const trendingResponse = await fetch(`${trendingUrl}?api_key=${apiKey}`);
   const trendingData = await trendingResponse.json();
   const trendingItems = trendingData.results;
-// console.log(trendingItems)
+console.log(trendingItems)
+const detailsPromises = trendingItems.map(async (item) => {
+  const mediaType = item.media_type;
+  const detailsUrl = `https://api.themoviedb.org/3/${mediaType}/${item.id}/external_ids?api_key=${apiKey}`;
+//  console.log(detailsUrl)
+  const detailsResponse = await fetch(detailsUrl);
+  // console.log(detailsResponse)
+  const detailsData = await detailsResponse.json();
+  // console.log(detailsData)
+  const imdbId = detailsData.imdb_id;
+   console.log(imdbId)
+  const collectionName = mediaType === "movie" ? "Movies" : "TVShow";
+  console.log(collectionName)
+ 
+  const collection = DB.collection(collectionName);
+  const mediaDetails = await collection.findOne({imdbId});
+console.log(mediaDetails,"......,,,,,,");
+  return mediaDetails ? { ...mediaDetails, createdAt: new Date() } : null;
+});
 
-try {
-  const trendingCollection =await DB.collection("Trending");
-  // Validate data
-  trendingItems.forEach((detail, index) =>{
-    if (typeof detail !== 'object' || detail === null) {
-      throw new Error(`Invalid data at index ${index}`);
-    }
-  });
-      await trendingCollection.deleteMany({});
-  const result =await trendingCollection.insertMany(trendingItems);
-  // console.log(result);
-} catch (error) {
-  console.error("Error inserting documents:", error);
-}
+
+const fullDetails = (await Promise.all(detailsPromises)).filter(
+    (details) => details !== null
+  );
+
+  const trendingCollection = DB.collection("Trending");
+  // await trendingCollection.deleteMany({});
+  // await trendingCollection.insertMany(fullDetails);
+// console.log(fullDetails)
+// try {
+  
+//   // Validate data
+//   trendingItems.forEach((detail, index) =>{
+//     if (typeof detail !== 'object' || detail === null) {
+//       throw new Error(`Invalid data at index ${index}`);
+//     }
+//   });
+ 
+//   //     await trendingCollection.deleteMany({});
+//   // const result =await trendingCollection.insertMany(trendingItems);
+//   console.log(result);
+// } catch (error) {
+//   console.error("Error inserting documents:", error);
+// }
 
 
 
 
 };
 
-
+// updateTrendingCollection()
 // Fetch trending movies and tv shows from the Trending collection
 const getTrending = async (req, res) => {
   try {
@@ -91,4 +121,27 @@ const getTrending = async (req, res) => {
   }
 };
 
-module.exports = { getTrending };
+const getmediabyId =async (req,res)=>{
+   try {
+    const id = req.params.id;
+    console.log(id)
+    const data = await Movie.findOne(
+      {imdbId:id},
+      {
+       title: 1,
+        releaseDate: 1,
+        rating: 1,
+        summary: 1,
+        genres: 1,
+        runtime: 1,
+        language: 1,
+        posterUrl: 1,
+        status: 1,
+   });
+    console.log(data)//tt15239678
+   } catch (error) {
+    console.log(error)
+   }
+}
+
+module.exports = { getTrending ,getmediabyId};

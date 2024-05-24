@@ -105,11 +105,11 @@ const SignUp = async (req, res) => {
 //for getting a user data 
   const getUser = async (req, res) => {
     try {
-    const id = req.params.id
+    const id = req.user.id;
       // Fetch the user with the given email or username
       const user = await Users.findOne(
         { _id: id },
-        { projection: { password_hashed: 0 } }
+       { password_hashed: 0 } 
       );
   
       // If user does not exist return 404 Not Found

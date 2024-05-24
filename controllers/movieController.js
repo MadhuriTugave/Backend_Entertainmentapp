@@ -142,7 +142,7 @@ const getMovieUrls = async (req, res) => {
 const getMovieCast = async (req, res) => {
   try {
     // Fetch the Movies collection from the database
-    const Movies = await db.collection("Movies");
+    // const Movies = await db.collection("Movies");
 
     // Fetch the movie with the given ID
     const movie = await Movies.findOne(
