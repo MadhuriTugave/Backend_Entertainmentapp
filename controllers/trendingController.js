@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const fetch = require("node-fetch");
 const Movies = require("../models/Movie");
 const TVShow =require("../models/Tv_show");
-const Movie = require("../models/Movie");
+
 
 // Load environment variables from the .env file
 dotenv.config();
@@ -38,24 +38,42 @@ const updateTrendingCollection = async () => {
   const trendingResponse = await fetch(`${trendingUrl}?api_key=${apiKey}`);
   const trendingData = await trendingResponse.json();
   const trendingItems = trendingData.results;
-console.log(trendingItems)
+// console.log(trendingItems)
 const detailsPromises = trendingItems.map(async (item) => {
   const mediaType = item.media_type;
   const detailsUrl = `https://api.themoviedb.org/3/${mediaType}/${item.id}/external_ids?api_key=${apiKey}`;
-//  console.log(detailsUrl)
+
   const detailsResponse = await fetch(detailsUrl);
-  // console.log(detailsResponse)
+
   const detailsData = await detailsResponse.json();
-  // console.log(detailsData)
+
   const imdbId = detailsData.imdb_id;
-   console.log(imdbId)
-  const collectionName = mediaType === "movie" ? "Movies" : "TVShow";
-  console.log(collectionName)
  
-  const collection = DB.collection(collectionName);
-  const mediaDetails = await collection.findOne({imdbId});
-console.log(mediaDetails,"......,,,,,,");
-  return mediaDetails ? { ...mediaDetails, createdAt: new Date() } : null;
+
+const collectionName = mediaType === "movie" ? "Movies" : "TVShow";
+
+const collection = DB.collection(collectionName);
+const namespace = collection.namespace;
+const collectionParts = namespace.split('.');
+const collectionname = collectionParts[1];
+// console.log(collectionname)
+
+const mediaDetails =collectionname === "Movies"? await  Movies.findOne({imdbId}): await TVShow.findOne({imdbId})
+
+
+
+// let mediaDetails =[];
+// if(collectionName === "Movies"){
+//    const details = await Movies.findOne({imdbId});
+//   console.log()
+//   mediaDetails.push(details)
+// }else{
+//   const TVdetails = await TVShow.findOne({imdbId});
+
+// mediaDetails.push(TVdetails)
+// }
+// console.log(mediaDetails)
+return mediaDetails ? { ...mediaDetails, createdAt: new Date() } : null;
 });
 
 
@@ -63,32 +81,13 @@ const fullDetails = (await Promise.all(detailsPromises)).filter(
     (details) => details !== null
   );
 
-  const trendingCollection = DB.collection("Trending");
-  // await trendingCollection.deleteMany({});
-  // await trendingCollection.insertMany(fullDetails);
 // console.log(fullDetails)
-// try {
-  
-//   // Validate data
-//   trendingItems.forEach((detail, index) =>{
-//     if (typeof detail !== 'object' || detail === null) {
-//       throw new Error(`Invalid data at index ${index}`);
-//     }
-//   });
- 
-//   //     await trendingCollection.deleteMany({});
-//   // const result =await trendingCollection.insertMany(trendingItems);
-//   console.log(result);
-// } catch (error) {
-//   console.error("Error inserting documents:", error);
-// }
-
-
-
-
+  const trendingCollection = DB.collection("Trending");
+  await trendingCollection.deleteMany({});
+  await trendingCollection.insertMany(fullDetails);
 };
-
 // updateTrendingCollection()
+
 // Fetch trending movies and tv shows from the Trending collection
 const getTrending = async (req, res) => {
   try {
@@ -101,7 +100,7 @@ const getTrending = async (req, res) => {
       .find(
         {},
         {
-        
+         
             title: 1,
             bannerUrl: 1,
             releaseDate: 1,
@@ -113,7 +112,7 @@ const getTrending = async (req, res) => {
         }
       )
       .toArray();
-
+// console.log(trendingItems)
     res.json(trendingItems);
   } catch (error) {
     console.error("Error in getTrending:", error);
@@ -121,27 +120,5 @@ const getTrending = async (req, res) => {
   }
 };
 
-const getmediabyId =async (req,res)=>{
-   try {
-    const id = req.params.id;
-    console.log(id)
-    const data = await Movie.findOne(
-      {imdbId:id},
-      {
-       title: 1,
-        releaseDate: 1,
-        rating: 1,
-        summary: 1,
-        genres: 1,
-        runtime: 1,
-        language: 1,
-        posterUrl: 1,
-        status: 1,
-   });
-    console.log(data)//tt15239678
-   } catch (error) {
-    console.log(error)
-   }
-}
 
-module.exports = { getTrending ,getmediabyId};
+module.exports = { getTrending };

@@ -7,11 +7,11 @@ const SignUp = async (req, res) => {
    
     const email = req.body.email;
       // Check if a user with the given email already exists
-      const emailExists = await Users.findOne({ email: email });
+      const emailExists = await Users.findOne({ email });
       if (emailExists) {
         return res
           .status(409)
-          .json({ success: false, message: "Email is already exists, Please Login" }); // 409 Conflict
+          .json({ success: false, message: "User already exists, Please Login" }); // 409 Conflict
       }
   
       // Hash the password
@@ -91,7 +91,7 @@ const SignUp = async (req, res) => {
       // Send the response back to the client
       res.status(200).json({
         success: true,
-        message: "Login successful.",
+        message: "Login successfull.",
         user: responseUser,
         access_token: accessToken,
         token_type: "Bearer",
