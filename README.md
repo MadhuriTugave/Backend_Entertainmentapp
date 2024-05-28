@@ -103,11 +103,11 @@ Follow these instructions to get a copy of the project up and running on your lo
    cd Entertainmentapp_Backend
 
 2. **Environment Configuration:**
-
+   Create a .env file and add
  - **PORT** : port where you want to run a application (3000).
-  -**MONGO_URL** : MongoDB connection string.
-  -**JWT_SECRET_KEY** : Your created secreat key.
-  -**API_KEY** : TMDB api key.
+ - **MONGO_URL** : MongoDB connection string.
+ - **JWT_SECRET_KEY** : Your created secreat key.
+ - **API_KEY** : TMDB api key.
 
 3. **Install dependencies:**
    ```bash
