@@ -2,51 +2,51 @@
 
 ## Welcome to the Database design documentation for the [ Entertainment ] app
 
-### User Tables
+### User Schema
 
-| Column        | Type      | Description                   |
+| Fields        | Type      | Description                   |
 | ------------- | --------- | ----------------------------- |
-| user_id       | INT       | User identifier               |
-| email         | VARCHAR   | User's email address          |
-| password_hash | VARCHAR   | Hashed password               |
+| user_id       | ObjectId  | User identifier               |
+| email         | String    | User's email address          |
+| password_hash | String    | Hashed password               |
 | created_at    | TIMESTAMP | Timestamp of account creation |
 | updated_at    | TIMESTAMP | Timestamp of last update      |
 
 
-### Bookmark or watchlist Tables
+### Bookmark or watchlist Schema
 
-| Column        | Type    | Description                         |
+| Fields        | Type    | Description                         |
 | ------------- | ------- | ----------------------------------- |
-| bookmark_id   | INT     | Bookmark identifier                 |
-| user_id       | INT     | User identifier (foreign key)       |
-| movie_id/ show_id       | INT     | Movie identifier/ TV show identifier (foreign key)      |
-| bookmark_type | VARCHAR | Type of bookmark (movie or TV show) |
+| bookmark_id   | ObjectId     | Bookmark identifier                 |
+| user_id       | ObjectId     | User identifier (foreign key)       |
+| movie_id/ show_id | ObjectId     | Movie identifier/ TV show identifier (foreign key)      |
+| bookmark_type | String | Type of bookmark (movie or TV show) |
 
-### Movie Table
+### Movie  Schema
 
-| Column       | Type    | Description               |
+| Fields       | Type    | Description               |
 | ------------ | ------- | ------------------------- |
-| movie_id     | INT     | Movie identifier          |
-| title        | VARCHAR | Title of the movie        |
-| poster url   | VARCHAR | Poster of the Movie       |
-| summary      | VARCHAR | Description of the movie  |
+| movie_id     | ObjectId| Movie identifier          |
+| title        | String  | Title of the movie        |
+| poster url   | String  | Poster of the Movie       |
+| summary      | String  | Description of the movie  |
 | release_date | DATE    | Release date of the movie |
-| genre        | VARCHAR | Genre of the movie        |
-| rating       | VARCHAR | Movie rating              |
+| genre        | String  | Genre of the movie        |
+| rating       | String  | Movie rating              |
 
-### TV Shows Table
+### TV Shows Schema
 
-| Column       | Type    | Description                 |
+| Fields       | Type    | Description                 |
 | ------------ | ------- | --------------------------- |
-| show_id      | INT     | TV show identifier          |
-| title        | VARCHAR | Title of the TV show        |
-| imdbid       | VARCHAR |                             |
-| rating       | INT     | rating of the show          |
-| language     | VARCHAR | language of the show        |
-| poster url   | VARCHAR | Poster of the Show          |
-| summary      | VARCHAR | Description of the Show     |
+| show_id      | ObjectId| TV show identifier          |
+| title        | String  | Title of the TV show        |
+| imdbid       | String  |                             |
+| rating       | Number  | rating of the show          |
+| language     | String  | language of the show        |
+| poster url   | String  | Poster of the Show          |
+| summary      | String  | Description of the Show     |
 | release_date | DATE    | Release date of the TV show |
-| genre        | VARCHAR | Genre of the TV show        |
-| cast         | VARCHAR | Cast of the show            |
+| genre        | String  | Genre of the TV show        |
+| cast         | String  | Cast of the show            |
 
 
