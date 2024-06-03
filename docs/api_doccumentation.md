@@ -1,24 +1,26 @@
-Entertainment App API Documentation
+##  Entertainment App API Documentation
 
-Introduction
+### Introduction
 
 Welcome to the Entertainment App API documentation. This API allows you to access various features related to movies, TV shows, and user-related functionalities. Below is a comprehensive guide on how to use the API.
 
-Authentication
+#### Authentication
 To access protected endpoints, you need to include your API key in the request headers.
 
-Set API Key
+#### Set API Key
 Include the API key in the Authorization header of your requests.
 
-Authorization: Bearer YOUR_API_KEY
+Authorization:
+-  `Bearer YOUR_API_KEY`
 Replace YOUR_API_KEY with your actual API key.
 
-Users
+### Users
 
-Register User
+#### Register User
 
-Endpoint : POST /user/SignUp
-Description : Register a new user.
+Endpoint :
+-  `POST /user/SignUp`
+-  Description : Register a new user.
 
 Request:
 Body:
@@ -26,7 +28,7 @@ email (string): User's email address.
 password (string): User's password.
 
 Response:
-Status: 201 Created
+-  `Status: 201 Created
 Body:
 {
 "success": true,
@@ -38,12 +40,13 @@ Body:
 "access_token": "access token",
 "token_type": "Bearer",
 "expiresIn": "3600"
-}
+`
 
-Login User
+#### Login User
 
-Endpoint: POST /user/Login
-Description: Log in an existing user.
+Endpoint:
+-  `POST /user/Login`
+-  Description: Log in an existing user.
 
 Request:
 Body:
@@ -51,7 +54,7 @@ email (string): User's email address.
 password (string): User's password.
 
 Response:
-Status: 200 OK
+-  `Status: 200 OK
 Body:
 {
 "success": true,
@@ -63,53 +66,55 @@ Body:
 "access_token": "access token",
 "token_type": "Bearer",
 "expiresIn": "3600"
-}
+}`
 
-Get user's details by id
+#### Get user's details by id
 
-Endpoint:GET /user/:id
-Description: Validate user credentials and retrieve user information.
-
-Request:
-Headers:
-Authorization: Bearer YOUR_API_KEY
-
-Response:
-Status: 200 OK
-
-Bookmarks
-
-Get all watchlist
-
-Endpoint: GET /watchlist
-
-Description: Get a list of bookmarks for the authenticated user.
+Endpoint:
+-  `GET /user/:id`
+-  Description: Validate user credentials and retrieve user information.
 
 Request:
 Headers:
 Authorization: Bearer YOUR_API_KEY
 
 Response:
-Status: 200 OK
+-  `Status: 200 OK`
+
+### Bookmarks
+
+#### Get all watchlist
+
+Endpoint:
+-  `GET /watchlist`
+
+-  Description: Get a list of bookmarks for the authenticated user.
+
+Request:
+-  `Headers:Authorization: Bearer YOUR_API_KEY`
+
+Response:
+-  `Status: 200 OK
 Body:
 [
 {
 "_id": "id",
 "type": "Movie"
 }
-]
+]`
 
-Get all watchlist with details
+#### Get all watchlist with details
 
-Endpoint: GET /watchlist/:id
-Description: Get details of single watchlist by its id.
+Endpoint:
+-  `GET /watchlist/:id`
+-  Description: Get details of single watchlist by its id.
 
 Request:
 Headers:
 Authorization: Bearer YOUR_API_KEY
 
 Response:
-Status: 200 OK
+-  `Status: 200 OK
 Body:
 {
 "watchlist": [
@@ -121,76 +126,85 @@ Body:
 "type": "Movie"
 }
 ]
-}
+}`
 
-Add Bookmark
+#### Add Bookmark
 
-Endpoint : POST /watchlist/:id
-Description: Add a new bookmark for the authenticated user.
+Endpoint :
+-  `POST /watchlist/:id`
+-  Description: Add a new bookmark for the authenticated user.
 
 Request:
 Headers:
 Authorization: Bearer YOUR_API_KEY
 
 Response:
-Status: 200 OK
+-  `Status: 200 OK
 Body:
 {
 "message": "Added to the watchlist",
 "data": []
-}
+}`
 
-Delete Bookmark
+#### Delete Bookmark
 
-Endpoint: DELETE /watchlist/:id
-Description: Delete a bookmark for the authenticated user.
+Endpoint:
+-  `DELETE /watchlist/:id`
+-  Description: Delete a bookmark for the authenticated user.
 
 Request:
 Headers:
 Authorization: Bearer YOUR_API_KEY
 
 Response:
-Status: 200 OK
+-  `Status: 200 OK
 Body:
 {
 "message": "Deleted from watchlist"
-}
+}`
 
-Movies
+### Movies
 
-Get all movies
+#### Get all movies
 
-Endpoint: GET /movies
-Description: Get list of all the movies
+Endpoint:
+-  `GET /movies`
+-  Description: Get list of all the movies
 
 Search for movies
 
-Endpoint: GET /movies/search?query=query name
-Description: Search for movies based on query
+Endpoint: 
+-  `GET /movies/search?query=query name`
+-  Description: Search for movies based on query
 
 Get URLs for specific movie
 
-Endpoint: GET /movies/:id/urls
-Description: Get movie urls
+Endpoint:
+-  `GET /movies/:id/urls`
+-  Description: Get movie urls
 
-TVshows
+### TVshows
 
-Get all tvshows
+#### Get all tvshows
 
-Endpoint: GET /tvshows
-Description: Get list of all the tvshows
+Endpoint:
+-  `GET /tvshows`
+-  Description: Get list of all the tvshows
 
 Search for a tvshow
 
-Endpoint: GET /tvshows/search?query=query name
-Description: Search for tvshow based on query
+Endpoint:
+-  `GET /tvshows/search?query=query name`
+-  Description: Search for tvshow based on query
 
 Get URLs for specific tvshow
 
-Endpoint: GET /tvshows/:id/urls
-Description: Get tvshow urls
+Endpoint:
+-  `GET /tvshows/:id/urls`
+-  Description: Get tvshow urls
 
-Trending
+### Trending
 Get all trendings
-Endpoint: /trending
-Description: Get all trending movies and tvshows
+Endpoint:
+-  `/trending`
+-  Description: Get all trending movies and tvshows
