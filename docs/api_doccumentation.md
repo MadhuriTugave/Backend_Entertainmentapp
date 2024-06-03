@@ -71,7 +71,7 @@ Body:
 #### Get user's details by id
 
 Endpoint:
--  `GET /user/:id`
+-  `GET /user/me`
 -  Description: Validate user credentials and retrieve user information.
 
 Request:
